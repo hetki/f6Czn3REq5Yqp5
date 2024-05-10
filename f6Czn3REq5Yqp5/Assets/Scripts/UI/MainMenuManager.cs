@@ -10,7 +10,7 @@ public class MainMenuManager : MonoBehaviour
 
     private void Start()
     {
-        SetCoinsText(GameManager.GetInstance().Coins);
+        SetCoinsText(PlayerPrefs.GetInt("coins"));
     }
 
     private void SetCoinsText(int coins) 

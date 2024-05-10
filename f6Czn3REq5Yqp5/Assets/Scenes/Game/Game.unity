@@ -357,7 +357,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 934267702}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5286632930298866672}
+        m_TargetAssemblyTypeName: MenuNavigation, Assembly-CSharp
+        m_MethodName: ShowMenu
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7807861700770332283}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &934267702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -526,7 +538,7 @@ GameObject:
   - component: {fileID: 1751577178}
   - component: {fileID: 1751577177}
   m_Layer: 5
-  m_Name: ScoreTxt
+  m_Name: CoinsTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -951,7 +963,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7906608073669999577}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5286632930298866672}
+        m_TargetAssemblyTypeName: MenuNavigation, Assembly-CSharp
+        m_MethodName: LoadMainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &860469171731520772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -995,7 +1019,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2486300563231692528}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5286632930298866672}
+        m_TargetAssemblyTypeName: MenuNavigation, Assembly-CSharp
+        m_MethodName: Exit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &918484959000356824
 GameObject:
   m_ObjectHideFlags: 0
@@ -1465,7 +1501,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 471207277224029898}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5286632929461617952}
+        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+        m_MethodName: RestartMatch
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 5286632930298866672}
+        m_TargetAssemblyTypeName: MenuNavigation, Assembly-CSharp
+        m_MethodName: HideMenu
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7807861700770332283}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &3925307119487611170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1830,6 +1890,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5286632929461617950}
+  - component: {fileID: 5286632929461617952}
   m_Layer: 5
   m_Name: PlayArea
   m_TagString: Untagged
@@ -1837,6 +1898,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &5286632929461617952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5286632929461617951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b831fc66b51904478f13c8b98c00658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5286632930298866658
 GameObject:
   m_ObjectHideFlags: 0
@@ -1849,6 +1922,7 @@ GameObject:
   - component: {fileID: 5286632930298866671}
   - component: {fileID: 5286632930298866668}
   - component: {fileID: 5286632930298866669}
+  - component: {fileID: 5286632930298866672}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1941,6 +2015,18 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &5286632930298866672
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5286632930298866658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee4453ea53befe549850314f8f7f9840, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5973525139965179313
 GameObject:
   m_ObjectHideFlags: 0
@@ -2137,7 +2223,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7666222006993104010}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 5286632930298866672}
+        m_TargetAssemblyTypeName: MenuNavigation, Assembly-CSharp
+        m_MethodName: HideMenu
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 7807861700770332283}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &9026536284255911545
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -33,13 +33,14 @@ public class MatchTypeSelector : MonoBehaviour
 
         dropdown.AddOptions(optionsList);
         dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
-        GameManager.GetInstance().SelectedCardLayout = cardLayouts[0];
+        PlayerPrefs.SetString("cardLayout", cardLayouts[0].x + "," + cardLayouts[0].y);
     }
 
     private void OnDropdownValueChanged(int index)
     {
         // Set selected layout on value change
-        GameManager.GetInstance().SelectedCardLayout = cardLayouts[index];
+        Vector2 layout = cardLayouts[index];
+        PlayerPrefs.SetString("cardLayout", layout.x + "," + layout.y);
     }
 
 }

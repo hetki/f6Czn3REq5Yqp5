@@ -1,64 +1,86 @@
-using Hetki.Helper;
 using System.Collections;
 using System.Collections.Generic;
-using System.Dynamic;
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.SceneManagement;
+using TMPro;
+using Hetki.Helper;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance;
+    TMP_Text coinsTmp;
+    TMP_Text multiplierTmp;
+    GameBoard gameBoard;
 
-    [SerializeField]
-    private int coins;
-    [SerializeField]
-    private Vector2 selectedCardLayout;
+    int coins = 0;
+    int activeCardsLeft = 0;
+    int multiplier = 0;
 
     public int Coins
     {
         get { return coins; }
-        set { coins = value; }
-    }
-
-    public Vector2 SelectedCardLayout
-    {
-        get { return selectedCardLayout; }
-        set { selectedCardLayout = value; }
-    }
-
-    public static GameManager GetInstance()
-    {
-        if (Instance != null)
-            return Instance;
-        else
+        set 
         {
-            try
-            {
-                Instance = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
-                Instance.Initialize();
-                return Instance;
-            }
-            catch (System.Exception ex)
-            {
-                //Could not find GO
-                MonoHelper.LogError("GetInstance() Error: " + ex.Message + "\n" + ex.StackTrace);
-                return null;
-            }
+            coins = value;
+            if(coinsTmp)
+                coinsTmp.text = coins.ToString();
         }
     }
 
-    private void Initialize()
+    public int ActiveCardsLeft
     {
-        coins = PlayerPrefs.GetInt("coins", 0);
+        get { return activeCardsLeft; }
+        set { activeCardsLeft = value; }
+    }
 
-        //Keep GameManager 'alive' for persistence
-        DontDestroyOnLoad(gameObject);
+    public int Multiplier
+    {
+        get { return multiplier; }
+        set 
+        { 
+            multiplier = value;
+            if (multiplierTmp)
+                multiplierTmp.text = "Multiplier: " + multiplier.ToString();
+        }
     }
 
     private void Awake()
     {
-        GetInstance();
+        gameBoard = transform.Find("Content").GetComponent<GameBoard>();
+        coinsTmp = transform.Find("CoinsTxt").GetComponent<TMP_Text>();
+        multiplierTmp = transform.Find("MultiplierTxt").GetComponent<TMP_Text>();
+
+        Coins = PlayerPrefs.GetInt("coins");
+        coinsTmp.text = Coins.ToString();
+        multiplierTmp.text = Multiplier.ToString();
+        ResetMultiplier();
+    }
+
+    public void IncreaseMultiplier() 
+    {
+        Multiplier++;
+    }
+
+    public void ResetMultiplier() 
+    {
+        Multiplier = 1;
+    }
+
+
+    public void GameOver()
+    {
+        SoundManager.GetInstance().PlaySound(Sounds.GameOver);
+        SaveProgress();
+        gameBoard.ResetBoard();
+        MonoHelper.Log("Game Over");
+    }
+
+    public void RestartMatch() 
+    {
+        gameBoard.ResetBoard();
+    }
+
+    private void SaveProgress() 
+    {
+        PlayerPrefs.SetInt("coins", Coins);
     }
 
 }

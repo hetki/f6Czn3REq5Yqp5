@@ -8,14 +8,19 @@ using UnityEngine.SceneManagement;
 
 public class MenuNavigation : MonoBehaviour
 {
-    public void LoadNewGame()
+    public void LoadMainMenu()
     {
-        StartCoroutine(LoadGameAsync());
+        StartCoroutine(LoadLevelAsync(0));
     }
 
-    IEnumerator LoadGameAsync()
+    public void LoadNewGame()
     {
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+        StartCoroutine(LoadLevelAsync(1));
+    }
+
+    IEnumerator LoadLevelAsync(int level)
+    {
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(level, LoadSceneMode.Single);
         asyncOperation.allowSceneActivation = false;
 
         while (!asyncOperation.isDone)
