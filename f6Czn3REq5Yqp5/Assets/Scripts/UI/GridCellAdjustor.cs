@@ -39,10 +39,10 @@ public class GridCellAdjustor : MonoBehaviour
 
     private void OnRectTransformDimensionsChange()
     {
-        FitGridCells();
+        RefitGridCells();
     }
 
-    private void FitGridCells()
+    public void RefitGridCells()
     {
         if (!initialized)
             Initialize();

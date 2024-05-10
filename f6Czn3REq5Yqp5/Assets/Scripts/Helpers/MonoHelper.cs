@@ -70,10 +70,21 @@ namespace Hetki.Helper
             return uid.ToString();
         }
 
-        public static void Log(object content, bool enabledDebugging)
+        public static void Log(object content)
         {
-            if (enabledDebugging)
+            if (DebugSettings.LogState())
                 Debug.Log(content);
+        }
+        public static void LogWarning(object content)
+        {
+            if (DebugSettings.LogState())
+                Debug.LogWarning(content);
+        }
+
+        public static void LogError(object content)
+        {
+            if (DebugSettings.LogState())
+                Debug.LogError(content);
         }
 
     }
