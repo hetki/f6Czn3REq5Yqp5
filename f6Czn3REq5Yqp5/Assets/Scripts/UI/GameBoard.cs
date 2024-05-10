@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class GameBoard : MonoBehaviour
 {
+    public bool boardLocked = true;
     int amountCards = 0;
 
     Card previousSelectedCard;
@@ -32,26 +33,29 @@ public class GameBoard : MonoBehaviour
         cardDataList = Resources.LoadAll<CardData>("Data/Cards").ToList();
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
         cellAdjustor = GetComponent<GridCellAdjustor>();
-
         ResetBoard();
 
     }
 
-    private void Start()
+    IEnumerator UnlockBoard(float delay)
     {
-        //Refresh grid UI after setup
-        cellAdjustor.RefitGridCells();
-        StartCoroutine(DisableGridLayout());
+        yield return MonoHelper.GetWait(delay);
+        boardLocked = false;
     }
 
-    IEnumerator DisableGridLayout()
+    IEnumerator FlipAllCards(float delay)
     {
-        yield return new WaitForEndOfFrame();
-        gridLayoutGroup.enabled = false;
+        yield return MonoHelper.GetWait(delay);
+        foreach (var card in boardCards)
+        {
+            card.FlipCard();
+        }
     }
 
     void CheckSelection(Card card) 
     {
+        if (boardLocked)
+            return;
 
         MonoHelper.Log("ID: " + card.CardData.id);
         SoundManager.GetInstance().PlaySound(Sounds.CardFlip);
@@ -85,8 +89,7 @@ public class GameBoard : MonoBehaviour
 
     void CardsMatched() 
     {
-        previousSelectedCard.gameObject.SetActive(false);
-        curSelectedCard.gameObject.SetActive(false);
+        StartCoroutine(DelayedCardRemoval(previousSelectedCard, curSelectedCard));
         ResetCards();
         gameManager.ActiveCardsLeft -= 2;
         gameManager.IncreaseMultiplier();
@@ -97,11 +100,27 @@ public class GameBoard : MonoBehaviour
 
     void CardsMismatched()
     {
+        curSelectedCard.FlipCard();
         MonoHelper.Log("Mismatch!");
+        StartCoroutine(DelayedCardsReset(previousSelectedCard, curSelectedCard));
         ResetCards();
         gameManager.ResetMultiplier();
 
         SoundManager.GetInstance().PlaySound(Sounds.Mismatch);
+    }
+
+    IEnumerator DelayedCardRemoval(Card card1, Card card2)
+    {
+        yield return MonoHelper.GetWait(1f);
+        Destroy(card1.gameObject);
+        Destroy(card2.gameObject);
+    }
+
+    IEnumerator DelayedCardsReset(Card card1, Card card2) 
+    {
+        yield return MonoHelper.GetWait(1f);
+        card1.FlipCard();
+        card2.FlipCard();
     }
 
     void ResetCards() 
@@ -141,7 +160,14 @@ public class GameBoard : MonoBehaviour
 
     public void ResetBoard() 
     {
-        gridLayoutGroup.enabled = true;
+        boardLocked = true;
+
+        //Remove children when reset is triggered elsewhere
+        if(transform.childCount > 0)
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Destroy(transform.GetChild(0));
+            }
 
         boardCards.Clear();
         assignedCards.Clear();
@@ -170,6 +196,10 @@ public class GameBoard : MonoBehaviour
             AssignCardPair();
         }
 
+        cellAdjustor.ResetGridLayout();
+        StartCoroutine(FlipAllCards(1f));
+        StartCoroutine(FlipAllCards(3f));
+        StartCoroutine(UnlockBoard(4.25f));
 
     }
 

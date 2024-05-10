@@ -1,3 +1,4 @@
+using Hetki.Helper;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,8 @@ public class GridCellAdjustor : MonoBehaviour
 
     private bool initialized = false;
     private RectTransform rectTransform;
-    private GridLayoutGroup gridLayout;
+    private GridLayoutGroup gridLayoutGroup;
+    private GameBoard gameBoard;
 
     private void Awake()
     {
@@ -24,11 +26,12 @@ public class GridCellAdjustor : MonoBehaviour
 
     private void Initialize()
     {
-        gridLayout = GetComponent<GridLayoutGroup>();
+        gameBoard = GetComponent<GameBoard>();
+        gridLayoutGroup = GetComponent<GridLayoutGroup>();
         rectTransform = GetComponent<RectTransform>();
 
-        gridLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-        gridLayout.constraintCount = columns;
+        gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+        gridLayoutGroup.constraintCount = columns;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
 
@@ -39,26 +42,48 @@ public class GridCellAdjustor : MonoBehaviour
 
     private void OnRectTransformDimensionsChange()
     {
-        RefitGridCells();
+        ResetGridLayout();
     }
 
-    public void RefitGridCells()
+    public void ResetGridLayout() 
+    {
+        if (!initialized)
+            Initialize();
+
+        StartCoroutine(ResetGridLayoutRoutine());
+    }
+
+    IEnumerator ResetGridLayoutRoutine()
+    {
+        bool wasLocked = gameBoard.boardLocked;
+        gameBoard.boardLocked = true;
+
+        yield return new WaitForEndOfFrame();
+        gridLayoutGroup.enabled = true;
+        yield return new WaitForEndOfFrame();
+        RefitGridCells();
+        yield return MonoHelper.GetWait(0.25f);
+        gridLayoutGroup.enabled = false;
+
+        if(!wasLocked)
+            gameBoard.boardLocked = false;
+    }
+
+    void RefitGridCells()
     {
         if (!initialized)
             Initialize();
 
         Vector2 cellSize = CalculateCellSize();
-        gridLayout.cellSize = cellSize;
+        gridLayoutGroup.cellSize = cellSize;
     }
 
     private Vector2 CalculateCellSize()
     {
-        int childCount = transform.childCount;
-        
-        int rowCount = (int)Mathf.Ceil((float)childCount / columns);
+        Vector2 selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));
 
-        float cellWidth = (rectTransform.rect.width / columns) - widthOffset;
-        float cellHeight = (rectTransform.rect.height / rowCount) - heightOffset;
+        float cellWidth = (rectTransform.rect.width / selectedLayout.x) - widthOffset;
+        float cellHeight = (rectTransform.rect.height / selectedLayout.y) - heightOffset;
 
         //Use smallest "best" fit to ensure it's always a square
         float smallestSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;

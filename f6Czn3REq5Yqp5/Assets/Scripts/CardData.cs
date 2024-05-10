@@ -10,7 +10,6 @@ using UnityEngine.Rendering;
 public class CardData : ScriptableObject
 {
 
-    [SerializeField]
     public int id;
     public string symbol;
 }

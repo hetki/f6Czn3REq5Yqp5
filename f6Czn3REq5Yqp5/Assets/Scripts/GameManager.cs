@@ -69,12 +69,18 @@ public class GameManager : MonoBehaviour
     {
         SoundManager.GetInstance().PlaySound(Sounds.GameOver);
         SaveProgress();
-        gameBoard.ResetBoard();
+        RestartMatch();
         MonoHelper.Log("Game Over");
     }
 
     public void RestartMatch() 
     {
+        StartCoroutine(DelayedBoardReset(1.5f));
+    }
+
+    IEnumerator DelayedBoardReset(float delay) 
+    {
+        yield return MonoHelper.GetWait(delay);
         gameBoard.ResetBoard();
     }
 
