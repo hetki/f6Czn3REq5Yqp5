@@ -3,25 +3,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Hetki.Helper;
+using Unity.Burst.Intrinsics;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    TMP_Text coinsTmp;
-    TMP_Text multiplierTmp;
+    TMP_Text turnsTmp;
+    TMP_Text comboTmp;
     GameBoard gameBoard;
+    Button restartButton;
 
-    int coins = 0;
+    int turns = 0;
     int activeCardsLeft = 0;
-    int multiplier = 0;
+    int combo = 0;
 
-    public int Coins
+    public int Turns
     {
-        get { return coins; }
+        get { return turns; }
         set 
         {
-            coins = value;
-            if(coinsTmp)
-                coinsTmp.text = coins.ToString();
+            turns = value;
+            if(turnsTmp)
+                turnsTmp.text = "Turns: " + turns.ToString();
         }
     }
 
@@ -31,51 +34,61 @@ public class GameManager : MonoBehaviour
         set { activeCardsLeft = value; }
     }
 
-    public int Multiplier
+    public int Combo
     {
-        get { return multiplier; }
+        get { return combo; }
         set 
-        { 
-            multiplier = value;
-            if (multiplierTmp)
-                multiplierTmp.text = "Multiplier: " + multiplier.ToString();
+        {
+            combo = value;
+            if (comboTmp)
+                comboTmp.text = "Combo: X" + Combo.ToString();
         }
     }
 
     private void Awake()
     {
+        restartButton = transform.Find("RestartBtn").GetComponent<Button>();
+        restartButton.gameObject.SetActive(false);
         gameBoard = transform.Find("Content").GetComponent<GameBoard>();
-        coinsTmp = transform.Find("CoinsTxt").GetComponent<TMP_Text>();
-        multiplierTmp = transform.Find("MultiplierTxt").GetComponent<TMP_Text>();
+        turnsTmp = transform.Find("TurnsTxt").GetComponent<TMP_Text>();
+        comboTmp = transform.Find("ComboTxt").GetComponent<TMP_Text>();
 
-        Coins = PlayerPrefs.GetInt("coins");
-        coinsTmp.text = Coins.ToString();
-        multiplierTmp.text = Multiplier.ToString();
-        ResetMultiplier();
+        Turns = PlayerPrefs.GetInt("turns");
+        Combo = PlayerPrefs.GetInt("combo");
+
+        ResetCombo();
     }
 
-    public void IncreaseMultiplier() 
+    public void IncreaseCombo() 
     {
-        Multiplier++;
+        Combo++;
     }
 
-    public void ResetMultiplier() 
+    public void ResetCombo() 
     {
-        Multiplier = 1;
+        Combo = 0;
     }
-
 
     public void GameOver()
     {
         SoundManager.GetInstance().PlaySound(Sounds.GameOver);
-        SaveProgress();
-        RestartMatch();
+        StartCoroutine(DelayedShowResetButton(1.3f));
+        ClearProgress();
         MonoHelper.Log("Game Over");
     }
 
     public void RestartMatch() 
     {
-        StartCoroutine(DelayedBoardReset(1.5f));
+        Turns = 0;
+        Combo = 0;
+        restartButton.gameObject.SetActive(false);
+        StartCoroutine(DelayedBoardReset(1f));
+    }
+
+    IEnumerator DelayedShowResetButton(float delay)
+    {
+        yield return MonoHelper.GetWait(delay);
+        restartButton.gameObject.SetActive(true);
     }
 
     IEnumerator DelayedBoardReset(float delay) 
@@ -84,9 +97,16 @@ public class GameManager : MonoBehaviour
         gameBoard.ResetBoard();
     }
 
+    private void ClearProgress() 
+    {
+        PlayerPrefs.SetInt("turns", 0);
+        PlayerPrefs.SetInt("combo", 0);
+    }
+
     private void SaveProgress() 
     {
-        PlayerPrefs.SetInt("coins", Coins);
+        PlayerPrefs.SetInt("turns", Turns);
+        PlayerPrefs.SetInt("combo", Combo);
     }
 
 }

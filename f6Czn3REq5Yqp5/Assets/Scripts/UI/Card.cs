@@ -6,7 +6,7 @@ using Hetki.Helper;
 
 public class Card : MonoBehaviour
 {
-    bool showingFront = false;
+    private bool showingFront = false;
     [SerializeField]
     CardData cardData;
     Button button;
@@ -25,6 +25,11 @@ public class Card : MonoBehaviour
             buttonText.text = "";
         }
     }
+    public bool ShowingFront
+    {
+        get { return showingFront; }
+        set{ showingFront = value; }
+    }
 
     private void Awake()
     {
@@ -40,14 +45,16 @@ public class Card : MonoBehaviour
 
     private void OnClick() 
     {
-        MonoHelper.Log("Is Board Locked?: " + gameBoard.boardLocked);
+        if (ShowingFront)
+            return; 
+
         if(!gameBoard.boardLocked)
             FlipCard();
     }
 
     public void FlipCard()
     {
-        if (!showingFront)
+        if (!ShowingFront)
             animator.SetTrigger("ToFront");
         else
             animator.SetTrigger("ToBack");
@@ -57,14 +64,14 @@ public class Card : MonoBehaviour
     {
         button.image.sprite = frontSprite;
         buttonText.text = CardData.symbol;
-        showingFront = true;
+        ShowingFront = true;
     }
 
     public void ShowCardBack()
     {
         buttonText.text = "";
         button.image.sprite = backSprite;
-        showingFront = false;
+        ShowingFront = false;
     }
 
 }

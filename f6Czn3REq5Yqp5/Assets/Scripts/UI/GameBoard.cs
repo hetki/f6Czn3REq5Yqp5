@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class GameBoard : MonoBehaviour
 {
     public bool boardLocked = true;
+    int uniqueCardCounter = 0;
     int amountCards = 0;
 
     Card previousSelectedCard;
@@ -54,6 +55,9 @@ public class GameBoard : MonoBehaviour
 
     void CheckSelection(Card card) 
     {
+        if (card.ShowingFront)
+            return;
+
         if (boardLocked)
             return;
 
@@ -75,11 +79,14 @@ public class GameBoard : MonoBehaviour
                 CardsMatched();
             }
             //Not same code or same card
-            else if (previousSelectedCard.CardData.id != curSelectedCard.CardData.id ||
-                curSelectedCard.GetInstanceID() == previousSelectedCard.GetInstanceID())
+            else if (previousSelectedCard.CardData.id != curSelectedCard.CardData.id)
             {
                 //Mismatch!
                 CardsMismatched();
+            }
+            else if (curSelectedCard.GetInstanceID() == previousSelectedCard.GetInstanceID()) 
+            {
+                ResetCards();
             }
         }
 
@@ -89,31 +96,40 @@ public class GameBoard : MonoBehaviour
 
     void CardsMatched() 
     {
-        StartCoroutine(DelayedCardRemoval(previousSelectedCard, curSelectedCard));
+        StartCoroutine(DelayedCardsRemoval(previousSelectedCard, curSelectedCard));
         ResetCards();
         gameManager.ActiveCardsLeft -= 2;
-        gameManager.IncreaseMultiplier();
-        gameManager.Coins += 20 * gameManager.Multiplier;
+        gameManager.IncreaseCombo();
+        gameManager.Turns += 1;
 
         SoundManager.GetInstance().PlaySound(Sounds.Match);
     }
 
     void CardsMismatched()
     {
-        curSelectedCard.FlipCard();
         MonoHelper.Log("Mismatch!");
-        StartCoroutine(DelayedCardsReset(previousSelectedCard, curSelectedCard));
+        gameManager.ResetCombo();
+        if(curSelectedCard != previousSelectedCard)
+            StartCoroutine(DelayedCardsReset(previousSelectedCard, curSelectedCard));
+        else
+            StartCoroutine(DelayedCardReset(curSelectedCard));
         ResetCards();
-        gameManager.ResetMultiplier();
+        gameManager.ResetCombo();
 
         SoundManager.GetInstance().PlaySound(Sounds.Mismatch);
     }
 
-    IEnumerator DelayedCardRemoval(Card card1, Card card2)
+    IEnumerator DelayedCardsRemoval(Card card1, Card card2)
     {
         yield return MonoHelper.GetWait(1f);
         Destroy(card1.gameObject);
         Destroy(card2.gameObject);
+    }
+
+    IEnumerator DelayedCardReset(Card card1)
+    {
+        yield return MonoHelper.GetWait(1f);
+        card1.FlipCard();
     }
 
     IEnumerator DelayedCardsReset(Card card1, Card card2) 
