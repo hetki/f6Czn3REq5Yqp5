@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections;
-using Hetki.Helper;
 
 /// <summary>
 /// Card behaviour

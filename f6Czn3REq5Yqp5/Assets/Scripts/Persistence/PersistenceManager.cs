@@ -3,7 +3,6 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using Newtonsoft.Json;
-using Hetki.Helper;
 using UnityEngine.SceneManagement;
 
 public class PersistenceManager : MonoBehaviour

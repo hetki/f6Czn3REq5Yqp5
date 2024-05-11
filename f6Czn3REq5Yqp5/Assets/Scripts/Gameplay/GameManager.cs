@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Hetki.Helper;
-using Unity.Burst.Intrinsics;
 using UnityEngine.UI;
 
 /// <summary>
