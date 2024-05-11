@@ -6,17 +6,14 @@ using UnityEngine.UI;
 
 public class GridCellAdjustor : MonoBehaviour
 {
-    [SerializeField]
     private int columns = 2;
-    [SerializeField]
     private float widthOffset = 20f;
-    [SerializeField]
     private float heightOffset = 20f;
-
     private bool initialized = false;
     private RectTransform rectTransform;
     private GridLayoutGroup gridLayoutGroup;
     private GameBoard gameBoard;
+    private bool shouldResetGrid = true;
 
     private void Awake()
     {
@@ -47,6 +44,13 @@ public class GridCellAdjustor : MonoBehaviour
 
     public void ResetGridLayout() 
     {
+        if (!shouldResetGrid)
+            return;
+
+        //Break since we do not want to touch the gridLayout
+        if (PlayerPrefs.GetInt("noSave") == -1)
+            return;
+
         if (!initialized)
             Initialize();
 
@@ -55,8 +59,11 @@ public class GridCellAdjustor : MonoBehaviour
 
     IEnumerator ResetGridLayoutRoutine()
     {
-        bool wasLocked = gameBoard.boardLocked;
-        gameBoard.boardLocked = true;
+        MonoHelper.Log("RESET GRID");
+        MonoHelper.Log("Graceful Exit?: " + PlayerPrefs.GetInt("noSave"));
+
+        bool wasLocked = gameBoard.BoardLocked;
+        gameBoard.BoardLocked = true;
 
         yield return new WaitForEndOfFrame();
         gridLayoutGroup.enabled = true;
@@ -66,7 +73,7 @@ public class GridCellAdjustor : MonoBehaviour
         gridLayoutGroup.enabled = false;
 
         if(!wasLocked)
-            gameBoard.boardLocked = false;
+            gameBoard.BoardLocked = false;
     }
 
     void RefitGridCells()
@@ -80,7 +87,7 @@ public class GridCellAdjustor : MonoBehaviour
 
     private Vector2 CalculateCellSize()
     {
-        Vector2 selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));
+        CVector2 selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));
 
         float cellWidth = (rectTransform.rect.width / selectedLayout.x) - widthOffset;
         float cellHeight = (rectTransform.rect.height / selectedLayout.y) - heightOffset;
@@ -89,5 +96,10 @@ public class GridCellAdjustor : MonoBehaviour
         float smallestSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
         return new Vector2(smallestSize, smallestSize);
+    }
+
+    private void OnDisable()
+    {
+        shouldResetGrid = false;
     }
 }

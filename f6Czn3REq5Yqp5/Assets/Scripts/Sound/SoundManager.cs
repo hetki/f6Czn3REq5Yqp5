@@ -31,10 +31,8 @@ public class SoundManager : MonoBehaviour
                 Instance.Initialize();
                 return Instance;
             }
-            catch (System.Exception ex)
+            catch
             {
-                //Could not find GO
-                MonoHelper.LogError("GetInstance() Error: " + ex.Message + "\n" + ex.StackTrace);
                 return null;
             }
         }

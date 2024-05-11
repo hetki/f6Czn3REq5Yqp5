@@ -44,6 +44,11 @@ public class GameManager : MonoBehaviour
                 comboTmp.text = "Combo: X" + Combo.ToString();
         }
     }
+    public GameBoard GameBoard
+    {
+        get { return gameBoard; }
+        set { gameBoard = value; }
+    }
 
     private void Awake()
     {
@@ -55,8 +60,6 @@ public class GameManager : MonoBehaviour
 
         Turns = PlayerPrefs.GetInt("turns");
         Combo = PlayerPrefs.GetInt("combo");
-
-        ResetCombo();
     }
 
     public void IncreaseCombo() 
@@ -73,7 +76,7 @@ public class GameManager : MonoBehaviour
     {
         SoundManager.GetInstance().PlaySound(Sounds.GameOver);
         StartCoroutine(DelayedShowResetButton(1.3f));
-        ClearProgress();
+        PersistenceManager.ClearProgress();
         MonoHelper.Log("Game Over");
     }
 
@@ -97,16 +100,23 @@ public class GameManager : MonoBehaviour
         gameBoard.ResetBoard();
     }
 
-    private void ClearProgress() 
+    public void SaveProgress() 
     {
-        PlayerPrefs.SetInt("turns", 0);
-        PlayerPrefs.SetInt("combo", 0);
+        if (PlayerPrefs.GetInt("noSave") != 1) 
+        {
+            PlayerPrefs.SetInt("noSave", -1);
+            PlayerPrefs.SetInt("turns", Turns);
+            PlayerPrefs.SetInt("combo", Combo);
+
+            MatchState matchState = PersistenceManager.GenerateMatchState(this, transform.Find("Content").gameObject);
+            PersistenceManager.SaveMatchState(matchState);
+        }
     }
 
-    private void SaveProgress() 
+    private void OnApplicationQuit()
     {
-        PlayerPrefs.SetInt("turns", Turns);
-        PlayerPrefs.SetInt("combo", Combo);
+        //When leaving mid match on desktop
+        SaveProgress();
     }
 
 }

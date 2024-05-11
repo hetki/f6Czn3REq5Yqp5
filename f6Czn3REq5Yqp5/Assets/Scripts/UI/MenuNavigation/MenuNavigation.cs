@@ -8,13 +8,32 @@ using UnityEngine.SceneManagement;
 
 public class MenuNavigation : MonoBehaviour
 {
+    [SerializeField]
+    GameObject soundManagerPrefab;
+    [SerializeField]
+    GameObject persistenceManagerPrefab;
+
+    private void Awake()
+    {
+        //Setup singletons
+        if(soundManagerPrefab)
+            if (SoundManager.GetInstance() == null)
+                Instantiate(soundManagerPrefab);
+        
+        if (persistenceManagerPrefab)
+            if (PersistenceManager.GetInstance() == null)
+                Instantiate(persistenceManagerPrefab);
+    }
+
     public void LoadMainMenu()
     {
+        PersistenceManager.ClearProgress();
         StartCoroutine(LoadLevelAsync(0));
     }
 
-    public void LoadNewGame()
+    public void LoadGame()
     {
+        MonoHelper.Log("LOAD GAME");
         StartCoroutine(LoadLevelAsync(1));
     }
 
@@ -44,8 +63,19 @@ public class MenuNavigation : MonoBehaviour
         menu.SetActive(true);
     }
 
-    public void Exit()
+    public void SaveExit()
     {
+        //Mark as has save
+        PlayerPrefs.SetInt("noSave", -1);
+        //Only meant for in-game where game manager would be present
+        transform.Find("PlayArea").GetComponent<GameManager>().SaveProgress();
         Application.Quit();
     }
+
+    public void Exit()
+    {
+        PersistenceManager.ClearProgress();
+        Application.Quit();
+    }
+
 }

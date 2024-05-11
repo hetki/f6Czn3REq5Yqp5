@@ -7,8 +7,7 @@ using UnityEngine.UI;
 
 public class GameBoard : MonoBehaviour
 {
-    public bool boardLocked = true;
-    int uniqueCardCounter = 0;
+    bool boardLocked = true;
     int amountCards = 0;
 
     Card previousSelectedCard;
@@ -21,9 +20,28 @@ public class GameBoard : MonoBehaviour
     GridCellAdjustor cellAdjustor;
     List<CardData> cardDataList;
     List<Card> boardCards;
+    CVector2 selectedLayout;
 
     HashSet<int> assignedCards;
     Dictionary<int, int> cardTypeAssignments;
+
+    public Card CurSelectedCard
+    {
+        get { return curSelectedCard; }
+        set { curSelectedCard = value; }
+    }
+
+    public bool BoardLocked
+    {
+        get { return boardLocked; }
+        set { boardLocked = value; }
+    }
+
+    public CVector2 SelectedLayout
+    {
+        get { return selectedLayout; }
+        set { selectedLayout = value; }
+    }
 
     private void Awake()
     {
@@ -34,7 +52,13 @@ public class GameBoard : MonoBehaviour
         cardDataList = Resources.LoadAll<CardData>("Data/Cards").ToList();
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
         cellAdjustor = GetComponent<GridCellAdjustor>();
-        ResetBoard();
+
+        if(PlayerPrefs.GetInt("noSave") != -1)
+            ResetBoard();
+        else 
+        {
+            RestoreState();
+        }
 
     }
 
@@ -108,13 +132,13 @@ public class GameBoard : MonoBehaviour
     void CardsMismatched()
     {
         MonoHelper.Log("Mismatch!");
-        gameManager.ResetCombo();
         if(curSelectedCard != previousSelectedCard)
             StartCoroutine(DelayedCardsReset(previousSelectedCard, curSelectedCard));
         else
             StartCoroutine(DelayedCardReset(curSelectedCard));
         ResetCards();
         gameManager.ResetCombo();
+        gameManager.Turns += 1;
 
         SoundManager.GetInstance().PlaySound(Sounds.Mismatch);
     }
@@ -176,13 +200,14 @@ public class GameBoard : MonoBehaviour
 
     public void ResetBoard() 
     {
+        MonoHelper.Log("ResetBoard");
         boardLocked = true;
 
         //Remove children when reset is triggered elsewhere
         if(transform.childCount > 0)
             for (int i = 0; i < transform.childCount; i++)
             {
-                Destroy(transform.GetChild(0));
+                Destroy(transform.GetChild(0).gameObject);
             }
 
         boardCards.Clear();
@@ -190,7 +215,7 @@ public class GameBoard : MonoBehaviour
         cardTypeAssignments.Clear();
 
         //Check required card layout from GameManager
-        Vector2 selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));
+        selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));
         gridLayoutGroup.constraintCount = (int)selectedLayout.x;
 
         amountCards = (int)(selectedLayout.x * selectedLayout.y);
@@ -216,6 +241,49 @@ public class GameBoard : MonoBehaviour
         StartCoroutine(FlipAllCards(1f));
         StartCoroutine(FlipAllCards(3f));
         StartCoroutine(UnlockBoard(4.25f));
+    }
+
+    private void RestoreState()
+    {
+        //Load old matchState
+        MatchState matchState = PersistenceManager.LoadMatchState();
+
+        selectedLayout = matchState.CardLayout;
+        amountCards = matchState.ActiveCardsLeft;
+        gameManager.ActiveCardsLeft = matchState.ActiveCardsLeft;
+
+        gridLayoutGroup.enabled = false;
+        //Instantiate and cache cards
+        for (int i = 0; i < amountCards; i++)
+        {
+            GameObject goRef = Instantiate(cardPrefab, transform);
+            RectTransform rect = goRef.GetComponent<RectTransform>();
+
+            rect.anchoredPosition = (Vector2)matchState.CardStates[i].Position;
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.sizeDelta = (Vector2)matchState.CardStates[i].Size;
+            rect.localScale = (Vector3)matchState.CardStates[i].Scale;
+
+            Card card = goRef.GetComponent<Card>();
+            CardData cardData = ScriptableObject.CreateInstance<CardData>();
+            cardData.id = matchState.CardStates[i].CardId;
+            cardData.symbol = matchState.CardStates[i].CardSymbol;
+
+            card.CardData = cardData;
+
+            if (matchState.CardStates[i].CardShowingFront)
+                card.FlipCard();
+
+            boardCards.Add(card);
+            Button buttonRef = goRef.GetComponent<Button>();
+            buttonRef.onClick.AddListener(() => CheckSelection(card));
+        }
+
+        if (matchState.CurSelectedCardIndex != -1)
+            curSelectedCard = boardCards[matchState.CurSelectedCardIndex];
+
+        StartCoroutine(UnlockBoard(1f));
 
     }
 

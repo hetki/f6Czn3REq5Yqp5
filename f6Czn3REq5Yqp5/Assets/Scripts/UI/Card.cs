@@ -48,7 +48,7 @@ public class Card : MonoBehaviour
         if (ShowingFront)
             return; 
 
-        if(!gameBoard.boardLocked)
+        if(!gameBoard.BoardLocked)
             FlipCard();
     }
 

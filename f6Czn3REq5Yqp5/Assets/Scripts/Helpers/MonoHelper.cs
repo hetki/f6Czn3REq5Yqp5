@@ -87,10 +87,10 @@ namespace Hetki.Helper
                 Debug.LogError(content);
         }
 
-        public static Vector2 StringToCardLayout(string value) 
+        public static CVector2 StringToCardLayout(string value) 
         {
             string[] split = value.Split(",");
-            return new Vector2(int.Parse(split[0]), int.Parse(split[1]));
+            return new CVector2(int.Parse(split[0]), int.Parse(split[1]));
         }
 
     }
