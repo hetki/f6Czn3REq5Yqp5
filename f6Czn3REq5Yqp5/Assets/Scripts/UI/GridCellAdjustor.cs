@@ -33,6 +33,7 @@ public class GridCellAdjustor : MonoBehaviour
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
         rectTransform = GetComponent<RectTransform>();
 
+        //Set columns
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         gridLayoutGroup.constraintCount = columns;
 
@@ -78,6 +79,7 @@ public class GridCellAdjustor : MonoBehaviour
         bool wasLocked = gameBoard.BoardLocked;
         gameBoard.BoardLocked = true;
 
+        //Wait for UI to update sequence
         yield return new WaitForEndOfFrame();
         gridLayoutGroup.enabled = true;
         yield return new WaitForEndOfFrame();

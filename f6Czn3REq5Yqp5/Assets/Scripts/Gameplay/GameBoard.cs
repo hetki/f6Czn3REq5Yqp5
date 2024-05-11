@@ -59,8 +59,10 @@ public class GameBoard : MonoBehaviour
         gridLayoutGroup = GetComponent<GridLayoutGroup>();
         cellAdjustor = GetComponent<GridCellAdjustor>();
 
+        //If no save, continue normally
         if(PlayerPrefs.GetInt("noSave") != -1)
             ResetBoard();
+        //Otherwise start restoring previous save
         else 
         {
             RestoreState();
@@ -105,12 +107,13 @@ public class GameBoard : MonoBehaviour
         if (boardLocked)
             return;
 
-        MonoHelper.Log("ID: " + card.CardData.id);
         SoundManager.GetInstance().PlaySound(Sounds.CardFlip);
 
+        //Set history
         if(curSelectedCard != null)
             previousSelectedCard = curSelectedCard;
 
+        //Set new current card
         curSelectedCard = card;
 
         if (previousSelectedCard != null) 
@@ -154,7 +157,6 @@ public class GameBoard : MonoBehaviour
     /// </summary>
     void CardsMismatched()
     {
-        MonoHelper.Log("Mismatch!");
         if(curSelectedCard != previousSelectedCard)
             StartCoroutine(DelayedCardsReset(previousSelectedCard, curSelectedCard));
         else
@@ -249,7 +251,6 @@ public class GameBoard : MonoBehaviour
     /// </summary>
     public void ResetBoard() 
     {
-        MonoHelper.Log("ResetBoard");
         boardLocked = true;
 
         //Remove children when reset is triggered elsewhere

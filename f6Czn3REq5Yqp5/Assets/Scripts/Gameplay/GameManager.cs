@@ -92,7 +92,6 @@ public class GameManager : MonoBehaviour
         SoundManager.GetInstance().PlaySound(Sounds.GameOver);
         StartCoroutine(DelayedShowResetButton(1.3f));
         PersistenceManager.ClearProgress();
-        MonoHelper.Log("Game Over");
     }
 
     /// <summary>

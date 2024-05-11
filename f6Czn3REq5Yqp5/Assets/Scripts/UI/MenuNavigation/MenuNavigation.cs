@@ -51,7 +51,6 @@ public class MenuNavigation : MonoBehaviour
     /// </summary>
     public void LoadGame()
     {
-        MonoHelper.Log("LOAD GAME");
         StartCoroutine(LoadLevelAsync(1));
     }
 
