@@ -12,7 +12,7 @@ namespace Hetki.Helper
         /// Get cached WaitForSeconds
         /// </summary>
         /// <param name="time"></param>
-        /// <returns></returns>
+        /// <returns>WaitForSeconds</returns>
         public static WaitForSeconds GetWait(float time)
         {
             if (waitDictionary.TryGetValue(time, out var wait)) return wait;
@@ -55,7 +55,7 @@ namespace Hetki.Helper
         /// Convert string to card layout
         /// </summary>
         /// <param name="value"></param>
-        /// <returns></returns>
+        /// <returns>CVector2</returns>
         public static CVector2 StringToCardLayout(string value) 
         {
             string[] split = value.Split(",");

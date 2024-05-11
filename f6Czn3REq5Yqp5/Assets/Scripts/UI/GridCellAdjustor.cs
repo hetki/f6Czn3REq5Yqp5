@@ -104,7 +104,7 @@ public class GridCellAdjustor : MonoBehaviour
     /// <summary>
     /// Calculate optimal grid cell size based on card layout and rect dimensions
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Vector2</returns>
     private Vector2 CalculateCellSize()
     {
         CVector2 selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));

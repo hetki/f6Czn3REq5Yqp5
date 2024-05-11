@@ -46,7 +46,7 @@ public class Card : MonoBehaviour
         buttonText = transform.GetChild(0).GetComponent<TMP_Text>();
         frontSprite = button.image.sprite;
         //Set default sprite as card back side
-        backSprite = Resources.Load<Sprite>("Sprites/CardBackSprites/CardBack4");
+        backSprite = Resources.Load<Sprite>("Sprites/CardBackSprites/CardBack9");
         button.image.sprite = backSprite;
         button.onClick.AddListener(OnClick);
     }
@@ -64,10 +64,11 @@ public class Card : MonoBehaviour
     }
 
     /// <summary>
-    /// Flip card
+    /// Flip card with animator
     /// </summary>
     public void FlipCard()
     {
+        //Only flip to front when back is displayed
         if (!ShowingFront)
             animator.SetTrigger("ToFront");
         else

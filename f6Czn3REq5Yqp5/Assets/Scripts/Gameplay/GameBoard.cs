@@ -289,7 +289,7 @@ public class GameBoard : MonoBehaviour
         cellAdjustor.ResetGridLayout();
         StartCoroutine(FlipAllCards(1f));
         StartCoroutine(FlipAllCards(3f));
-        StartCoroutine(UnlockBoard(4.25f));
+        StartCoroutine(UnlockBoard(3.5f));
     }
 
     /// <summary>
@@ -338,7 +338,7 @@ public class GameBoard : MonoBehaviour
         if (matchState.CurSelectedCardIndex != -1)
             curSelectedCard = boardCards[matchState.CurSelectedCardIndex];
 
-        StartCoroutine(UnlockBoard(1f));
+        StartCoroutine(UnlockBoard(.5f));
     }
 
 }

@@ -96,6 +96,28 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Reset match variables and show new board
+    /// </summary>
+    public void RestartMatch()
+    {
+        Turns = 0;
+        Combo = 0;
+        restartButton.gameObject.SetActive(false);
+        StartCoroutine(DelayedBoardReset(1f));
+    }
+
+    /// <summary>
+    /// Reset board with delay
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
+    IEnumerator DelayedBoardReset(float delay)
+    {
+        yield return MonoHelper.GetWait(delay);
+        gameBoard.ResetBoard();
+    }
+
+    /// <summary>
     /// Show reset button with delay
     /// </summary>
     /// <param name="delay"></param>
@@ -121,11 +143,4 @@ public class GameManager : MonoBehaviour
             PersistenceManager.SaveMatchState(matchState);
         }
     }
-
-    private void OnApplicationQuit()
-    {
-        //When leaving mid match on desktop
-        SaveProgress();
-    }
-
 }

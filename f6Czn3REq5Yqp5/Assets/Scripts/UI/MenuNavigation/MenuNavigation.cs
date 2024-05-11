@@ -93,10 +93,19 @@ public class MenuNavigation : MonoBehaviour
     /// </summary>
     public void SaveExit()
     {
-        //Mark as has save
-        PlayerPrefs.SetInt("noSave", -1);
-        //Only meant for in-game where game manager would be present
-        transform.Find("PlayArea").GetComponent<GameManager>().SaveProgress();
+        GameManager gameManager = transform.Find("PlayArea").GetComponent<GameManager>();
+
+        //Only save if there's cards left
+        if(gameManager.ActiveCardsLeft > 0) 
+        {
+            //Mark as has save
+            PlayerPrefs.SetInt("noSave", -1);
+            //Only meant for in-game where game manager would be present
+            gameManager.SaveProgress();
+        }
+        else
+            PersistenceManager.ClearProgress();
+
         Application.Quit();
     }
 
