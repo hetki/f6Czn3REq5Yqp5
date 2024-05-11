@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Project DebugSettings - Enables or disables logging
+/// </summary>
 public static class DebugSettings
 {
     private static bool logOverride = false;

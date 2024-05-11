@@ -10,6 +10,9 @@ public class PersistenceManager : MonoBehaviour
 {
     private static PersistenceManager Instance;
 
+    /// <summary>
+    /// Pre-init run for Persistence Manager
+    /// </summary>
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -18,9 +21,12 @@ public class PersistenceManager : MonoBehaviour
         Initialization();
     }
 
+    /// <summary>
+    /// Initialize manager
+    /// </summary>
     private void Initialization() 
     {
-        MonoHelper.Log("noSave: " + PlayerPrefs.GetInt("noSave"));
+        //When save found load game scene
         if (PlayerPrefs.GetInt("noSave") == -1)
         {
             GameObject.Find("MainMenuManager").GetComponent<MenuNavigation>().LoadGame();
@@ -29,6 +35,10 @@ public class PersistenceManager : MonoBehaviour
             PlayerPrefs.SetInt("noSave", 0);
     }
 
+    /// <summary>
+    /// Get PersistenceManager Instance
+    /// </summary>
+    /// <returns>PersistenceManager</returns>
     public static PersistenceManager GetInstance()
     {
         if (Instance != null)
@@ -47,16 +57,24 @@ public class PersistenceManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Generate Match State from current game running
+    /// </summary>
+    /// <param name="gameManager"></param>
+    /// <param name="content"></param>
+    /// <returns>MatchState</returns>
     public static MatchState GenerateMatchState(GameManager gameManager, GameObject content) 
     {
         int curSelectedCardIndex = -1;
 
+        //Save cur selected card
         if (gameManager.GameBoard.CurSelectedCard != null)
             curSelectedCardIndex = gameManager.GameBoard.CurSelectedCard.transform.GetSiblingIndex();
 
         MatchState matchState = new MatchState(curSelectedCardIndex, gameManager.ActiveCardsLeft, gameManager.GameBoard.SelectedLayout, null);
         
         matchState.CardStates = new List<CardState>();
+        //Save each card state
         for (int i = 0; i < content.transform.childCount;i++)
         {
             RectTransform rect = content.transform.GetChild(i).GetComponent<RectTransform>();
@@ -75,12 +93,20 @@ public class PersistenceManager : MonoBehaviour
         return matchState;
     }
 
+    /// <summary>
+    /// Writes match state to matchState.json file
+    /// </summary>
+    /// <param name="matchState"></param>
     public static void SaveMatchState(MatchState matchState)
     {
         string json = JsonConvert.SerializeObject(matchState);
         File.WriteAllText(Application.persistentDataPath + "/matchState.json", json);
     }
 
+    /// <summary>
+    /// Loads match state from matchState.json file
+    /// </summary>
+    /// <returns>MatchState</returns>
     public static MatchState LoadMatchState()
     {
         string path = Application.persistentDataPath + "/matchState.json";
@@ -96,20 +122,28 @@ public class PersistenceManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// On scene changed
+    /// </summary>
+    /// <param name="oldScene"></param>
+    /// <param name="newScene"></param>
     private static void SceneChanged(Scene oldScene, Scene newScene) 
     {
         if(newScene.buildIndex == 0)
             GetInstance().Initialization();
     }
 
+    /// <summary>
+    /// Clear progress flags and related values
+    /// </summary>
     public static void ClearProgress()
     {
         PlayerPrefs.SetInt("noSave", 1);
         PlayerPrefs.SetInt("turns", 0);
         PlayerPrefs.SetInt("combo", 0);
 
+        //Subscribe to activeSceneChanged event
         SceneManager.activeSceneChanged += SceneChanged;
     }
-
 
 }

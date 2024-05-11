@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections;
 using System;
 
+/// <summary>
+/// Used as Vector2 replacement when serializing
+/// </summary>
 [Serializable]
 public class CVector2
 { 
@@ -33,14 +36,10 @@ public class CVector2
         return string.Format("CVector3: X:{0} Y:{1}",_x,_y);
     }
 
-    public Vector2 ToVector2()
-    {
-        Vector2 vector2;
-        vector2.x = _x;
-        vector2.y = _y;
-        return vector2;
-    }
-
+    /// <summary>
+    /// Cast to Vector2
+    /// </summary>
+    /// <param name="cVector"></param>
     public static implicit operator Vector2(CVector2 cVector)
     {
         return new Vector2(cVector.x, cVector.y);

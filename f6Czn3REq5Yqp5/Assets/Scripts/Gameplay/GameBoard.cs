@@ -5,25 +5,28 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Game board logic
+/// </summary>
 public class GameBoard : MonoBehaviour
 {
-    bool boardLocked = true;
-    int amountCards = 0;
+    private bool boardLocked = true;
+    private int amountCards = 0;
 
-    Card previousSelectedCard;
-    Card curSelectedCard;
+    private Card previousSelectedCard;
+    private Card curSelectedCard;
 
-    GameManager gameManager;
+    private GameManager gameManager;
     [SerializeField]
-    GameObject cardPrefab;
-    GridLayoutGroup gridLayoutGroup;
-    GridCellAdjustor cellAdjustor;
-    List<CardData> cardDataList;
-    List<Card> boardCards;
-    CVector2 selectedLayout;
+    private GameObject cardPrefab;
+    private GridLayoutGroup gridLayoutGroup;
+    private GridCellAdjustor cellAdjustor;
+    private List<CardData> cardDataList;
+    private List<Card> boardCards;
+    private CVector2 selectedLayout;
 
-    HashSet<int> assignedCards;
-    Dictionary<int, int> cardTypeAssignments;
+    private HashSet<int> assignedCards;
+    private Dictionary<int, int> cardTypeAssignments;
 
     public Card CurSelectedCard
     {
@@ -43,6 +46,9 @@ public class GameBoard : MonoBehaviour
         set { selectedLayout = value; }
     }
 
+    /// <summary>
+    /// Do initialization for board
+    /// </summary>
     private void Awake()
     {
         gameManager = transform.parent.GetComponent<GameManager>();
@@ -62,12 +68,22 @@ public class GameBoard : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Delayed allowal of interaction
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     IEnumerator UnlockBoard(float delay)
     {
         yield return MonoHelper.GetWait(delay);
         boardLocked = false;
     }
 
+    /// <summary>
+    /// Flip all cards with delay
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     IEnumerator FlipAllCards(float delay)
     {
         yield return MonoHelper.GetWait(delay);
@@ -77,6 +93,10 @@ public class GameBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Check current selection on button click
+    /// </summary>
+    /// <param name="card"></param>
     void CheckSelection(Card card) 
     {
         if (card.ShowingFront)
@@ -102,26 +122,26 @@ public class GameBoard : MonoBehaviour
                 //Match!
                 CardsMatched();
             }
-            //Not same code or same card
+            //Not same type
             else if (previousSelectedCard.CardData.id != curSelectedCard.CardData.id)
             {
                 //Mismatch!
                 CardsMismatched();
             }
-            else if (curSelectedCard.GetInstanceID() == previousSelectedCard.GetInstanceID()) 
-            {
-                ResetCards();
-            }
         }
 
+        //Game over when no active cards left
         if (gameManager.ActiveCardsLeft == 0)
             gameManager.GameOver();
     }
 
+    /// <summary>
+    /// Sequence to run when cards match
+    /// </summary>
     void CardsMatched() 
     {
         StartCoroutine(DelayedCardsRemoval(previousSelectedCard, curSelectedCard));
-        ResetCards();
+        ResetSelectedCards();
         gameManager.ActiveCardsLeft -= 2;
         gameManager.IncreaseCombo();
         gameManager.Turns += 1;
@@ -129,6 +149,9 @@ public class GameBoard : MonoBehaviour
         SoundManager.GetInstance().PlaySound(Sounds.Match);
     }
 
+    /// <summary>
+    /// Sequence to run when cards mismatch
+    /// </summary>
     void CardsMismatched()
     {
         MonoHelper.Log("Mismatch!");
@@ -136,13 +159,19 @@ public class GameBoard : MonoBehaviour
             StartCoroutine(DelayedCardsReset(previousSelectedCard, curSelectedCard));
         else
             StartCoroutine(DelayedCardReset(curSelectedCard));
-        ResetCards();
+        ResetSelectedCards();
         gameManager.ResetCombo();
         gameManager.Turns += 1;
 
         SoundManager.GetInstance().PlaySound(Sounds.Mismatch);
     }
 
+    /// <summary>
+    /// Remove cards with delay
+    /// </summary>
+    /// <param name="card1"></param>
+    /// <param name="card2"></param>
+    /// <returns></returns>
     IEnumerator DelayedCardsRemoval(Card card1, Card card2)
     {
         yield return MonoHelper.GetWait(1f);
@@ -150,12 +179,23 @@ public class GameBoard : MonoBehaviour
         Destroy(card2.gameObject);
     }
 
+    /// <summary>
+    /// Reset card with delay
+    /// </summary>
+    /// <param name="card1"></param>
+    /// <returns></returns>
     IEnumerator DelayedCardReset(Card card1)
     {
         yield return MonoHelper.GetWait(1f);
         card1.FlipCard();
     }
 
+    /// <summary>
+    /// Reset cards with delay
+    /// </summary>
+    /// <param name="card1"></param>
+    /// <param name="card2"></param>
+    /// <returns></returns>
     IEnumerator DelayedCardsReset(Card card1, Card card2) 
     {
         yield return MonoHelper.GetWait(1f);
@@ -163,12 +203,18 @@ public class GameBoard : MonoBehaviour
         card2.FlipCard();
     }
 
-    void ResetCards() 
+    /// <summary>
+    /// Reset selected cards
+    /// </summary>
+    void ResetSelectedCards() 
     {
         previousSelectedCard = null;
         curSelectedCard = null;
     }
 
+    /// <summary>
+    /// Determine what card pair type isn't in use and pick it
+    /// </summary>
     void AssignCardPair() 
     {
         //Pick card type - must have 0 assignments
@@ -180,7 +226,7 @@ public class GameBoard : MonoBehaviour
 
         cardTypeAssignments.Add(cardType,0);
 
-        //Ensure we assing 2 cards
+        //Ensure we're getting 2 cards
         while (cardTypeAssignments[cardType] < 2) 
         {
             int cardIndex = Random.Range(0, boardCards.Count);
@@ -198,6 +244,9 @@ public class GameBoard : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reset the game board
+    /// </summary>
     public void ResetBoard() 
     {
         MonoHelper.Log("ResetBoard");
@@ -243,17 +292,22 @@ public class GameBoard : MonoBehaviour
         StartCoroutine(UnlockBoard(4.25f));
     }
 
+    /// <summary>
+    /// Restore game with MatchState
+    /// </summary>
     private void RestoreState()
     {
         //Load old matchState
         MatchState matchState = PersistenceManager.LoadMatchState();
 
+        //Assign active gameplay vars
         selectedLayout = matchState.CardLayout;
         amountCards = matchState.ActiveCardsLeft;
         gameManager.ActiveCardsLeft = matchState.ActiveCardsLeft;
 
+        //Keep stored card positions
         gridLayoutGroup.enabled = false;
-        //Instantiate and cache cards
+        //Instantiate, set and cache cards
         for (int i = 0; i < amountCards; i++)
         {
             GameObject goRef = Instantiate(cardPrefab, transform);
@@ -280,11 +334,11 @@ public class GameBoard : MonoBehaviour
             buttonRef.onClick.AddListener(() => CheckSelection(card));
         }
 
+        //CurSelectedCard Persistence
         if (matchState.CurSelectedCardIndex != -1)
             curSelectedCard = boardCards[matchState.CurSelectedCardIndex];
 
         StartCoroutine(UnlockBoard(1f));
-
     }
 
 }

@@ -9,12 +9,18 @@ using UnityEngine;
 public class PersistenceEditorTool : EditorWindow
 {
 
+    /// <summary>
+    /// Clears all player prefs
+    /// </summary>
     [MenuItem("Hetki/Persistence/Clear Player Prefs")]
     public static void ClearPlayerPrefs()
     {
         PlayerPrefs.DeleteAll();
     }
 
+    /// <summary>
+    /// Deletes match state file
+    /// </summary>
     [MenuItem("Hetki/Persistence/Delete Match State File")]
     public static void DeleteMatchStateFile()
     {
@@ -30,6 +36,9 @@ public class PersistenceEditorTool : EditorWindow
         }
     }
 
+    /// <summary>
+    /// Clears all prefs and deletes match state file
+    /// </summary>
     [MenuItem("Hetki/Persistence/Mass Clear")]
     public static void MassClear()
     {

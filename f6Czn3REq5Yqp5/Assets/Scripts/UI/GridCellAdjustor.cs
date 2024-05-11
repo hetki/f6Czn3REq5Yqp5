@@ -15,12 +15,18 @@ public class GridCellAdjustor : MonoBehaviour
     private GameBoard gameBoard;
     private bool shouldResetGrid = true;
 
+    /// <summary>
+    /// GridCellAdjustor Pre-Init sequence
+    /// </summary>
     private void Awake()
     {
         if (!initialized)
             Initialize();
     }
 
+    /// <summary>
+    /// GridCellAdjustor Initialization
+    /// </summary>
     private void Initialize()
     {
         gameBoard = GetComponent<GameBoard>();
@@ -30,18 +36,24 @@ public class GridCellAdjustor : MonoBehaviour
         gridLayoutGroup.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
         gridLayoutGroup.constraintCount = columns;
 
+        //Refresh layout
         LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
-
         LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         
         initialized = true;
     }
 
+    /// <summary>
+    /// On dimensions change
+    /// </summary>
     private void OnRectTransformDimensionsChange()
     {
         ResetGridLayout();
     }
 
+    /// <summary>
+    /// Adapt grid to new dimensions
+    /// </summary>
     public void ResetGridLayout() 
     {
         if (!shouldResetGrid)
@@ -57,11 +69,12 @@ public class GridCellAdjustor : MonoBehaviour
         StartCoroutine(ResetGridLayoutRoutine());
     }
 
+    /// <summary>
+    /// Adapt grid to new dimensions with controlled delay
+    /// </summary>
+    /// <returns></returns>
     IEnumerator ResetGridLayoutRoutine()
     {
-        MonoHelper.Log("RESET GRID");
-        MonoHelper.Log("Graceful Exit?: " + PlayerPrefs.GetInt("noSave"));
-
         bool wasLocked = gameBoard.BoardLocked;
         gameBoard.BoardLocked = true;
 
@@ -76,6 +89,9 @@ public class GridCellAdjustor : MonoBehaviour
             gameBoard.BoardLocked = false;
     }
 
+    /// <summary>
+    /// Refit grid cells to grid
+    /// </summary>
     void RefitGridCells()
     {
         if (!initialized)
@@ -85,6 +101,10 @@ public class GridCellAdjustor : MonoBehaviour
         gridLayoutGroup.cellSize = cellSize;
     }
 
+    /// <summary>
+    /// Calculate optimal grid cell size based on card layout and rect dimensions
+    /// </summary>
+    /// <returns></returns>
     private Vector2 CalculateCellSize()
     {
         CVector2 selectedLayout = MonoHelper.StringToCardLayout(PlayerPrefs.GetString("cardLayout"));
@@ -100,6 +120,7 @@ public class GridCellAdjustor : MonoBehaviour
 
     private void OnDisable()
     {
+        //Prevent grid reset after disabled
         shouldResetGrid = false;
     }
 }

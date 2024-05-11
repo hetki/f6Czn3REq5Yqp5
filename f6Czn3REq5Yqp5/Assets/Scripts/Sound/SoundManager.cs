@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Sound Manager
+/// </summary>
 public class SoundManager : MonoBehaviour
 {
     private static SoundManager Instance;
@@ -14,11 +17,18 @@ public class SoundManager : MonoBehaviour
     [SerializeField]
     private static Dictionary<string, AudioClip> audioClips;
 
+    /// <summary>
+    /// SoundManager Pre-Initialization sequence
+    /// </summary>
     private void Awake()
     {
         GetInstance();
     }
 
+    /// <summary>
+    /// Get the SoundManager instance
+    /// </summary>
+    /// <returns>SoundManager</returns>
     public static SoundManager GetInstance()
     {
         if (Instance != null)
@@ -38,6 +48,9 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initialize SoundManager
+    /// </summary>
     private void Initialize()
     {
         sfx = transform.Find("SFX").GetComponent<AudioSource>();
@@ -49,6 +62,10 @@ public class SoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    /// <summary>
+    /// Play sound on sfx audioSource
+    /// </summary>
+    /// <param name="sounds"></param>
     public void PlaySound(Sounds sounds) 
     {
         sfx.PlayOneShot(audioClips[sounds.ToString()]);
@@ -56,6 +73,9 @@ public class SoundManager : MonoBehaviour
 
 }
 
+/// <summary>
+/// SoundClip names as enums to prevent code errors
+/// </summary>
 public enum Sounds 
 {
     CardFlip,

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// MatchState for persistence system
+/// </summary>
 [Serializable]
 public class MatchState
 {
@@ -42,6 +45,9 @@ public class MatchState
     }
 }
 
+/// <summary>
+/// CardStates for persistence system
+/// </summary>
 [Serializable]
 public class CardState 
 {

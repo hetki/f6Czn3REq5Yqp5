@@ -5,9 +5,13 @@ using TMPro;
 using Hetki.Helper;
 using System;
 
+/// <summary>
+/// MatchTypeSelector dropdown behaviour
+/// </summary>
 public class MatchTypeSelector : MonoBehaviour
 {
     private TMP_Dropdown dropdown;
+    //Available cardLayouts
     private List<Vector2> cardLayouts;
 
     private void Awake()

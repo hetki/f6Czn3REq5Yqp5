@@ -6,6 +6,9 @@ using Hetki.Helper;
 using Unity.Burst.Intrinsics;
 using UnityEngine.UI;
 
+/// <summary>
+/// Gameplay management in Game Scene
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     TMP_Text turnsTmp;
@@ -50,6 +53,9 @@ public class GameManager : MonoBehaviour
         set { gameBoard = value; }
     }
 
+    /// <summary>
+    /// Do GameManager initialization
+    /// </summary>
     private void Awake()
     {
         restartButton = transform.Find("RestartBtn").GetComponent<Button>();
@@ -62,16 +68,25 @@ public class GameManager : MonoBehaviour
         Combo = PlayerPrefs.GetInt("combo");
     }
 
+    /// <summary>
+    /// Increases combo +1
+    /// </summary>
     public void IncreaseCombo() 
     {
         Combo++;
     }
 
+    /// <summary>
+    /// Sets combo to 0
+    /// </summary>
     public void ResetCombo() 
     {
         Combo = 0;
     }
 
+    /// <summary>
+    /// Sets game state as "Over", resets board and progress
+    /// </summary>
     public void GameOver()
     {
         SoundManager.GetInstance().PlaySound(Sounds.GameOver);
@@ -80,26 +95,20 @@ public class GameManager : MonoBehaviour
         MonoHelper.Log("Game Over");
     }
 
-    public void RestartMatch() 
-    {
-        Turns = 0;
-        Combo = 0;
-        restartButton.gameObject.SetActive(false);
-        StartCoroutine(DelayedBoardReset(1f));
-    }
-
+    /// <summary>
+    /// Show reset button with delay
+    /// </summary>
+    /// <param name="delay"></param>
+    /// <returns></returns>
     IEnumerator DelayedShowResetButton(float delay)
     {
         yield return MonoHelper.GetWait(delay);
         restartButton.gameObject.SetActive(true);
     }
 
-    IEnumerator DelayedBoardReset(float delay) 
-    {
-        yield return MonoHelper.GetWait(delay);
-        gameBoard.ResetBoard();
-    }
-
+    /// <summary>
+    /// Save game progress with persistence system when flagged
+    /// </summary>
     public void SaveProgress() 
     {
         if (PlayerPrefs.GetInt("noSave") != 1) 

@@ -6,16 +6,28 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// MenuNavigation methods to attach to menu buttons
+/// </summary>
 public class MenuNavigation : MonoBehaviour
 {
+    /// <summary>
+    /// SoundManagerPrefab - Only assign in main scene
+    /// </summary>
     [SerializeField]
     GameObject soundManagerPrefab;
+    /// <summary>
+    /// PersistenceManagerPrefab - Only assign in main scene
+    /// </summary>
     [SerializeField]
     GameObject persistenceManagerPrefab;
 
+    /// <summary>
+    /// Initialization
+    /// </summary>
     private void Awake()
     {
-        //Setup singletons
+        //Setup singletons from here, for use in main menu scene
         if(soundManagerPrefab)
             if (SoundManager.GetInstance() == null)
                 Instantiate(soundManagerPrefab);
@@ -25,12 +37,18 @@ public class MenuNavigation : MonoBehaviour
                 Instantiate(persistenceManagerPrefab);
     }
 
+    /// <summary>
+    /// Load main menu scene async
+    /// </summary>
     public void LoadMainMenu()
     {
         PersistenceManager.ClearProgress();
         StartCoroutine(LoadLevelAsync(0));
     }
 
+    /// <summary>
+    /// Load game scene async
+    /// </summary>
     public void LoadGame()
     {
         MonoHelper.Log("LOAD GAME");
@@ -44,7 +62,6 @@ public class MenuNavigation : MonoBehaviour
 
         while (!asyncOperation.isDone)
         {
-            MonoHelper.Log("Scene Load Progress: " + asyncOperation.progress);
             if (asyncOperation.progress >= 0.9f)
             {
                 asyncOperation.allowSceneActivation = true;
@@ -53,16 +70,27 @@ public class MenuNavigation : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hide menu
+    /// </summary>
+    /// <param name="menu"></param>
     public void HideMenu(GameObject menu)
     {
         menu.SetActive(false);
     }
 
+    /// <summary>
+    /// Show menu
+    /// </summary>
+    /// <param name="menu"></param>
     public void ShowMenu(GameObject menu)
     {
         menu.SetActive(true);
     }
 
+    /// <summary>
+    /// Save and exit game
+    /// </summary>
     public void SaveExit()
     {
         //Mark as has save
@@ -72,6 +100,9 @@ public class MenuNavigation : MonoBehaviour
         Application.Quit();
     }
 
+    /// <summary>
+    /// Exit game without saving
+    /// </summary>
     public void Exit()
     {
         PersistenceManager.ClearProgress();

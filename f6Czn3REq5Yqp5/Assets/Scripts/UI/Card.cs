@@ -4,6 +4,9 @@ using TMPro;
 using System.Collections;
 using Hetki.Helper;
 
+/// <summary>
+/// Card behaviour
+/// </summary>
 public class Card : MonoBehaviour
 {
     private bool showingFront = false;
@@ -31,18 +34,26 @@ public class Card : MonoBehaviour
         set{ showingFront = value; }
     }
 
+    /// <summary>
+    /// Card initialization
+    /// </summary>
     private void Awake()
     {
+        //Set card's required variables
         gameBoard = transform.parent.GetComponent<GameBoard>();
         button = GetComponent<Button>();
         animator = GetComponent<Animator>();
         buttonText = transform.GetChild(0).GetComponent<TMP_Text>();
         frontSprite = button.image.sprite;
+        //Set default sprite as card back side
         backSprite = Resources.Load<Sprite>("Sprites/CardBackSprites/CardBack4");
         button.image.sprite = backSprite;
         button.onClick.AddListener(OnClick);
     }
 
+    /// <summary>
+    /// Card on click event
+    /// </summary>
     private void OnClick() 
     {
         if (ShowingFront)
@@ -52,6 +63,9 @@ public class Card : MonoBehaviour
             FlipCard();
     }
 
+    /// <summary>
+    /// Flip card
+    /// </summary>
     public void FlipCard()
     {
         if (!ShowingFront)
@@ -60,6 +74,9 @@ public class Card : MonoBehaviour
             animator.SetTrigger("ToBack");
     }
 
+    /// <summary>
+    /// Show card front side
+    /// </summary>
     public void ShowCardFront()
     {
         button.image.sprite = frontSprite;
@@ -67,6 +84,9 @@ public class Card : MonoBehaviour
         ShowingFront = true;
     }
 
+    /// <summary>
+    /// Show card back side
+    /// </summary>
     public void ShowCardBack()
     {
         buttonText.text = "";

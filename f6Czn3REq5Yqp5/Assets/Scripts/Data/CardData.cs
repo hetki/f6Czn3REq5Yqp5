@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// CardData as ScriptableObjects to store multiple different card types
+/// </summary>
 [CreateAssetMenu(fileName = "New Card", menuName = "Hetki/Data/Card")]
 public class CardData : ScriptableObject
 {
